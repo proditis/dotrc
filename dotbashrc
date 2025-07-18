@@ -18,7 +18,7 @@ build () {
 drun () {
     imageName=$( get_imageName )
     DOCKER_DOMAIN="${DOCKER_DOMAIN:-echocity-f.com}"
-    docker run -it --rm --name ${imageName} -h "${imageName}.${DOCKER_DOMAIN}" --domainname "${DOCKER_DOMAIN}" -e "ETSCTF_FLAG=ETSCTF_PLACEHOLDER" --memory 2024M --no-healthcheck "$@" ${imageName} bash
+    docker run -it --rm --name ${imageName} -h "${imageName}" --domainname "${DOCKER_DOMAIN}" -e "ETSCTF_FLAG=ETSCTF_PLACEHOLDER" --memory 2024M --no-healthcheck "$@" ${imageName} bash
 }
 
 # exec on a running container
