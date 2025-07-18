@@ -1,0 +1,50 @@
+export NO_AT_BRIDGE=1
+
+### Target development ###
+
+# determine the name of a docker image based on current folder
+get_imageName () {
+    imageName=$(basename $PWD)
+    echo "${imageName,,}"
+}
+
+# build a docker image and tag it
+build () {
+    imageName=$( get_imageName )
+    docker build --force-rm --rm --compress --no-cache -t "${imageName}:latest" .
+}
+
+# run an image
+drun () {
+    imageName=$( get_imageName )
+    DOCKER_DOMAIN="${DOCKER_DOMAIN:-echocity-f.com}"
+    docker run -it --rm --name ${imageName} -h "${imageName}.${DOCKER_DOMAIN}" --domainname "${DOCKER_DOMAIN}" -e "ETSCTF_FLAG=ETSCTF_PLACEHOLDER" --memory 2024M --no-healthcheck "$@" ${imageName} bash
+}
+
+# exec on a running container
+dexec () {
+    imageName=$( get_imageName )
+    docker exec -it ${imageName} "$@"
+}
+
+# copy from a a running container
+cpfrom () {
+    imageName=$( get_imageName )
+    docker cp ${imageName}":$1" "$2"
+}
+
+# copy to a running container
+cpto () {
+    imageName=$( get_imageName )
+    docker cp "$1" ${imageName}":$2"
+}
+
+# clean untagged images and layers i dont recall why i dont use docker prune with a filter
+alias dclean="docker images |grep none |awk '{print \$3}'|xargs docker rmi -f"
+
+alias apt-get="sudo apt-get"
+alias apt="sudo apt"
+
+# shortcut for developing and setting echoCTF.RED competitions
+alias backend="backend/yii"
+alias frontend="frontend/yii"
